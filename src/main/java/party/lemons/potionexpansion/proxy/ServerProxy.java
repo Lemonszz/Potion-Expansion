@@ -5,4 +5,9 @@ package party.lemons.potionexpansion.proxy;
  */
 public class ServerProxy implements IProxy
 {
+	@Override
+	public void initTESR()
+	{
+
+	}
 }

@@ -5,4 +5,5 @@ package party.lemons.potionexpansion.proxy;
  */
 public interface IProxy
 {
+	void initTESR();
 }
