@@ -27,6 +27,7 @@ public class PotionHandler
 
 			if(input == type && ingred.apply(stack))
 			{
+				System.out.println(input.getRegistryName() + " " + stack.getItem() + " " + out.getRegistryName());
 				return true;
 			}
 		}

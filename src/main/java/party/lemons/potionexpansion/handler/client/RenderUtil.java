@@ -18,6 +18,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
+
 
 /**
  * Created by Sam on 16/04/2018.
@@ -30,6 +32,11 @@ public class RenderUtil
 	public static float FLUID_OFFSET = 0.005f;
 
 	protected static Minecraft mc = Minecraft.getMinecraft();
+
+	public Color getFluidColour(FluidStack stack)
+	{
+		return new Color(stack.getFluid().getColor(stack));
+	}
 
 	/**
 	 * Renders a fluid block, call from TESR. x/y/z is the rendering offset.

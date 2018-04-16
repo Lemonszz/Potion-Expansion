@@ -74,6 +74,7 @@ public class TileEntityCauldron extends TileEntity
 	{
 		NBTTagCompound tags = super.getUpdateTag();
 		tags.setTag("tank", tank.writeToNBT(new NBTTagCompound()));
+		tags.setString("Potion", type.getRegistryName().toString());
 		return tags;
 	}
 
@@ -81,6 +82,7 @@ public class TileEntityCauldron extends TileEntity
 	{
 		super.readFromNBT(tag);
 		tank.readFromNBT((NBTTagCompound) tag.getTag("tank"));
+		type = PotionUtils.getPotionTypeFromNBT(tag);
 	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound compound)
@@ -93,9 +95,9 @@ public class TileEntityCauldron extends TileEntity
 
 	public void readFromNBT(NBTTagCompound compound)
 	{
+		super.readFromNBT(compound);
 		tank.readFromNBT(compound.getCompoundTag("tank"));
 		type = PotionUtils.getPotionTypeFromNBT(compound);
-		super.readFromNBT(compound);
 	}
 
 	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
