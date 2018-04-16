@@ -47,6 +47,11 @@ public class TileEntityCauldron extends TileEntity
 
 			tank.getFluid().tag.setString("Potion", resourcelocation.toString());
 		}
+
+		if(tank.getFluid() == null || tank.getFluidAmount() <= 0)
+		{
+			this.type = PotionTypes.WATER;
+		}
 	}
 
 	@Override

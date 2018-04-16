@@ -23,11 +23,9 @@ public class PotionHandler
 		{
 			PotionType input = getInput(mix);
 			Ingredient ingred = getIngredient(mix);
-			PotionType out = getOutput(mix);
 
 			if(input == type && ingred.apply(stack))
 			{
-				System.out.println(input.getRegistryName() + " " + stack.getItem() + " " + out.getRegistryName());
 				return true;
 			}
 		}

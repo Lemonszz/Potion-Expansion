@@ -1,5 +1,7 @@
 package party.lemons.potionexpansion.block.te;
 
+import net.minecraft.init.PotionTypes;
+import net.minecraft.potion.PotionType;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;

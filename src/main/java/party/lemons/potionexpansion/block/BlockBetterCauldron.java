@@ -18,9 +18,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.potion.PotionHelper;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
@@ -66,14 +67,60 @@ public class BlockBetterCauldron extends BlockCauldron implements IModel
 		if(player.isSneaking())
 			return false;
 
-		if(!FluidUtil.interactWithFluidHandler(player, hand, world, pos, side) && side == EnumFacing.UP)
-		{
-			return mixPotion(player.getHeldItem(hand), world, pos, state, world.rand);
-		}
-		else
-		{
+		if(FluidUtil.interactWithFluidHandler(player, hand, world, pos, side) && side == EnumFacing.UP)
 			return true;
+
+		ItemStack held = player.getHeldItem(hand);
+
+		if(!held.isEmpty())
+		{
+			if(world.isAirBlock(pos.down()))
+			{
+				if(held.getItem() instanceof ItemFireball)
+				{
+					world.playSound(null, pos, SoundEvents.ITEM_FIRECHARGE_USE, SoundCategory.BLOCKS, 1.0F, (world.rand.nextFloat() - world.rand.nextFloat()) * 0.2F + 1.0F);
+					world.setBlockState(pos.down(), Blocks.FIRE.getDefaultState());
+					held.shrink(1);
+
+					return true;
+				}else if(held.getItem() instanceof ItemFlintAndSteel)
+				{
+					world.playSound(player, pos, SoundEvents.ITEM_FLINTANDSTEEL_USE, SoundCategory.BLOCKS, 1.0F, world.rand.nextFloat() * 0.4F + 0.8F);
+					world.setBlockState(pos.down(), Blocks.FIRE.getDefaultState(), 11);
+					held.damageItem(1, player);
+
+					return true;
+				}
+			}
+			if(held.getItem() instanceof ItemGlassBottle)
+			{
+				TileEntityCauldron te = (TileEntityCauldron) world.getTileEntity(pos);
+				if(te.getTank().getFluid() != null && te.getTank().getFluid().getFluid() == ModFluids.POTION)
+				{
+					if(te.getTank().getFluidAmount() >= 500)
+					{
+						ItemStack stack = new ItemStack(Items.POTIONITEM);
+						PotionType type = te.getPotionType();
+
+						PotionUtils.addPotionToItemStack(stack, type);
+						te.getTank().drain(500, true);
+
+						held.shrink(1);
+						player.addItemStackToInventory(stack);
+
+						world.playSound(null, pos, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 1F	, world.rand.nextFloat() * 0.4F + 0.8F);
+						return true;
+					}
+				}
+			}
+
 		}
+
+		if(mixPotion(player.getHeldItem(hand), world, pos, state, world.rand))
+			return true;
+
+
+		return false;
 	}
 
 	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
@@ -82,13 +129,19 @@ public class BlockBetterCauldron extends BlockCauldron implements IModel
 		{
 			EntityItem itemEntity = (EntityItem) entityIn;
 			ItemStack stack = itemEntity.getItem();
-			Random rand = worldIn.rand;
 
 			if(stack.isEmpty())
 				return;
 
+			TileEntityCauldron te = (TileEntityCauldron) worldIn.getTileEntity(pos);
+			if(te.getTank().getFluidAmount() == 0)
+				return;
+
+			Random rand = worldIn.rand;
+
 			mixPotion(stack, worldIn, pos, state, rand);
 
+			PotionExpansion.proxy.spawnSplashParticle(worldIn, itemEntity.posX, itemEntity.posY, itemEntity.posZ, te);
 			itemEntity.motionY = -1.5F;
 			itemEntity.motionX = (-1 + (rand.nextFloat() * 2)) / 2;
 			itemEntity.motionZ = (-1 + (rand.nextFloat() * 2)) / 2;
