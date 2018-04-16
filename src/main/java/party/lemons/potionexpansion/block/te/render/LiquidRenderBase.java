@@ -8,10 +8,17 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.init.Items;
+import net.minecraft.init.PotionTypes;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionHelper;
+import net.minecraft.potion.PotionUtils;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import org.lwjgl.opengl.GL11;
 import party.lemons.potionexpansion.block.te.TileEntityCauldron;
+import party.lemons.potionexpansion.fluid.ModFluids;
 import party.lemons.potionexpansion.handler.client.RenderUtil;
 
 /**
@@ -43,7 +50,7 @@ public abstract class LiquidRenderBase<T extends TileEntityCauldron> extends Til
 		GlStateManager.translate(x, y, z);
 
 		int brightness = Minecraft.getMinecraft().world.getCombinedLight(te.getPos(), fluid.getFluid().getLuminosity());
-		RenderUtil.putTexturedQuad(buffer, sprite, 2 / 16D, getY(te, x, y, z), 2 / 16D, 12 / 16D, 0, 12 / 16d, EnumFacing.UP, fluid.getFluid().getColor(), brightness, false);
+		RenderUtil.putTexturedQuad(buffer, sprite, 2 / 16D, getY(te, x, y, z), 2 / 16D, 12 / 16D, 0, 12 / 16d, EnumFacing.UP, fluid.getFluid().getColor(fluid), brightness, false);
 		tessellator.draw();
 
 		GlStateManager.disableBlend();

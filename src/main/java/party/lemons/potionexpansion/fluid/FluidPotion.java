@@ -26,7 +26,6 @@ public class FluidPotion extends Fluid
 
 	@Override
 	public int getColor() {
-
 		return DEFAULT_BLUE;
 	}
 
@@ -43,7 +42,7 @@ public class FluidPotion extends Fluid
 			return stack.tag.getInteger("CustomPotionColor");
 		} else
 		{
-			return getPotionTypeFromNBT(stack.tag) == PotionTypes.EMPTY ? DEFAULT_BLUE : PotionUtils.getPotionColorFromEffectList(PotionUtils.getEffectsFromTag(stack.tag));
+			return getPotionTypeFromNBT(stack.tag) == PotionTypes.EMPTY ? DEFAULT_BLUE : 0xFF000000 | PotionUtils.getPotionColorFromEffectList(PotionUtils.getEffectsFromTag(stack.tag));
 		}
 	}
 
@@ -52,5 +51,5 @@ public class FluidPotion extends Fluid
 		return tag == null || !tag.hasKey("Potion") ? PotionTypes.EMPTY : PotionType.getPotionTypeForName(tag.getString("Potion"));
 	}
 
-	public static final int DEFAULT_BLUE = 16253176;
+	public static final int DEFAULT_BLUE = 0xFF000000 | 0x3148F4;
 }

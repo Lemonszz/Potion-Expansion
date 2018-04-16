@@ -1,5 +1,6 @@
 package party.lemons.potionexpansion;
 
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -25,5 +26,10 @@ public class PotionExpansion
 	{
 		proxy.initTESR();
 		ModFluids.init();
+	}
+
+	static
+	{
+		FluidRegistry.enableUniversalBucket();
 	}
 }

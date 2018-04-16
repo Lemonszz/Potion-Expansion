@@ -15,5 +15,6 @@ public class ModFluids
 		POTION = new FluidPotion();
 
 		FluidRegistry.registerFluid(POTION);
+		FluidRegistry.addBucketForFluid(POTION);
 	}
 }

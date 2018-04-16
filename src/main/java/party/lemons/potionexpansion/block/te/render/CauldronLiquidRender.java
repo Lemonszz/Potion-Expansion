@@ -13,6 +13,12 @@ public class CauldronLiquidRender extends LiquidRenderBase<TileEntityCauldron>
 	@Override
 	public double getY(TileEntityCauldron te, double x, double y, double z)
 	{
+
+		return getYPos(te);
+	}
+
+	public static double getYPos(TileEntityCauldron te)
+	{
 		float scale = Math.min(1.0F, 0.2F + (1.0f - THICC / 2 - THICC) * te.getTank().getFluidAmount() / te.getTank().getCapacity());
 		float shake = 0;
 		if(scale != 1.0F)

@@ -16,6 +16,7 @@ public class FluidTankCauldron extends FluidTank
 	public FluidTankCauldron(TileEntityCauldron tile, int capacity)
 	{
 		super(capacity);
+		this.setTileEntity(tile);
 	}
 
 	public FluidTankCauldron(TileEntityCauldron tile, @Nullable FluidStack fluidStack, int capacity)
@@ -27,6 +28,7 @@ public class FluidTankCauldron extends FluidTank
 	public FluidTankCauldron(TileEntityCauldron tile, Fluid fluid, int amount, int capacity)
 	{
 		super(fluid, amount, capacity);
+		this.setTileEntity(tile);
 	}
 
 	public boolean canFillFluidType(FluidStack fluid)
@@ -37,5 +39,10 @@ public class FluidTankCauldron extends FluidTank
 	public boolean canDrainFluidType(@Nullable FluidStack fluid)
 	{
 		return super.canDrainFluidType(fluid) && (fluid.getFluid() == FluidRegistry.WATER || fluid.getFluid() == ModFluids.POTION);
+	}
+
+	protected void onContentsChanged()
+	{
+		tile.markDirty();
 	}
 }
