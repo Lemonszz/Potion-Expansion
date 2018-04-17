@@ -34,6 +34,7 @@ import party.lemons.potionexpansion.handler.client.RenderUtil;
 import party.lemons.potionexpansion.misc.IModel;
 import party.lemons.potionexpansion.misc.MiscUtil;
 import party.lemons.potionexpansion.particle.ParticleGoodBubble;
+import party.lemons.potionexpansion.potion.PotionUseType;
 
 import javax.annotation.Nullable;
 import java.util.Random;
@@ -90,15 +91,18 @@ public class BlockBetterCauldron extends BlockCauldron implements IModel
 				{
 					if(te.getTank().getFluidAmount() >= 500)
 					{
-						ItemStack stack = new ItemStack(Items.POTIONITEM);
+						ItemStack stack = new ItemStack(te.getUseType().getContainerItem());
 						PotionType type = te.getPotionType();
 
 						PotionUtils.addPotionToItemStack(stack, type);
 						te.getTank().drain(500, true);
 
 						held.shrink(1);
-						player.addItemStackToInventory(stack);
-
+						if(!player.addItemStackToInventory(stack))
+						{
+							player.dropItem(stack, false);
+						}
+						
 						world.playSound(null, pos, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 1F	, world.rand.nextFloat() * 0.4F + 0.8F);
 						return true;
 					}
@@ -112,7 +116,10 @@ public class BlockBetterCauldron extends BlockCauldron implements IModel
 			ItemStack returnStack = mixArrow(player.getHeldItem(hand), world, (TileEntityCauldron) world.getTileEntity(pos));
 			if(!returnStack.isEmpty())
 			{
-				player.addItemStackToInventory(returnStack);
+				if(!player.addItemStackToInventory(returnStack))
+				{
+					player.dropItem(returnStack, false);
+				}
 				return true;
 			}
 		}
@@ -180,6 +187,32 @@ public class BlockBetterCauldron extends BlockCauldron implements IModel
 	{
 		TileEntityCauldron te = (TileEntityCauldron) world.getTileEntity(pos);
 		PotionType type = te.getPotionType();
+
+		if(toMix.getItem() == Items.GUNPOWDER && te.getUseType() == PotionUseType.NORMAL)
+		{
+			toMix.shrink(1);
+			te.setUseType(PotionUseType.SPLASH);
+			world.playSound(null, pos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1F, rand.nextFloat());
+
+			for(int i = 0 ; i < 5; i++)
+				PotionExpansion.proxy.spawnCauldronSpellParticle(pos, te);
+
+			return true;
+		}
+
+		if(toMix.getItem() == Items.DRAGON_BREATH && te.getUseType() == PotionUseType.NORMAL)
+		{
+			toMix.shrink(1);
+			te.setUseType(PotionUseType.LINGERING);
+			world.playSound(null, pos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1F, rand.nextFloat());
+
+			for(int i = 0 ; i < 5; i++)
+				PotionExpansion.proxy.spawnCauldronSpellParticle(pos, te);
+
+			return true;
+		}
+
+
 
 		if(PotionHandler.canMixPotion(type, toMix))
 		{

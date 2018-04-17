@@ -14,6 +14,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import party.lemons.potionexpansion.fluid.ModFluids;
+import party.lemons.potionexpansion.potion.PotionUseType;
 
 import javax.annotation.Nullable;
 
@@ -24,6 +25,7 @@ public class TileEntityCauldron extends TileEntity
 {
 	FluidTank tank = new FluidTankCauldron(this,2000);
 	PotionType type = PotionTypes.WATER;
+	PotionUseType useType = PotionUseType.NORMAL;
 
 
 	@Override
@@ -51,6 +53,7 @@ public class TileEntityCauldron extends TileEntity
 		if(tank.getFluid() == null || tank.getFluidAmount() <= 0)
 		{
 			this.type = PotionTypes.WATER;
+			this.useType = PotionUseType.NORMAL;
 		}
 	}
 
@@ -74,12 +77,23 @@ public class TileEntityCauldron extends TileEntity
 		return type;
 	}
 
+	public PotionUseType getUseType()
+	{
+		return useType;
+	}
+
+	public void setUseType(PotionUseType type)
+	{
+		this.useType = type;
+	}
+
 	@Override
 	public NBTTagCompound getUpdateTag()
 	{
 		NBTTagCompound tags = super.getUpdateTag();
 		tags.setTag("tank", tank.writeToNBT(new NBTTagCompound()));
 		tags.setString("Potion", type.getRegistryName().toString());
+		tags.setInteger("type", useType.ordinal());
 		return tags;
 	}
 
@@ -88,12 +102,14 @@ public class TileEntityCauldron extends TileEntity
 		super.readFromNBT(tag);
 		tank.readFromNBT((NBTTagCompound) tag.getTag("tank"));
 		type = PotionUtils.getPotionTypeFromNBT(tag);
+		useType = PotionUseType.values()[tag.getInteger("type")];
 	}
 
 	public NBTTagCompound writeToNBT(NBTTagCompound compound)
 	{
 		compound.setTag("tank", tank.writeToNBT(new NBTTagCompound()));
 		compound.setString("Potion", type.getRegistryName().toString());
+		compound.setInteger("type", useType.ordinal());
 
 		return super.writeToNBT(compound);
 	}
@@ -103,6 +119,7 @@ public class TileEntityCauldron extends TileEntity
 		super.readFromNBT(compound);
 		tank.readFromNBT(compound.getCompoundTag("tank"));
 		type = PotionUtils.getPotionTypeFromNBT(compound);
+		useType = PotionUseType.values()[compound.getInteger("type")];
 	}
 
 	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
