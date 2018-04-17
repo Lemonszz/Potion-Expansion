@@ -53,6 +53,8 @@ public class BlockBetterCauldron extends BlockCauldron implements IModel
 		this.setDefaultState(this.blockState.getBaseState().withProperty(LEVEL, 0).withProperty(BOIL, false));
 	}
 
+	//TODO: more generic methods for onBlockActivated and onEntityCollide
+
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
@@ -102,7 +104,7 @@ public class BlockBetterCauldron extends BlockCauldron implements IModel
 						{
 							player.dropItem(stack, false);
 						}
-						
+
 						world.playSound(null, pos, SoundEvents.BLOCK_BREWING_STAND_BREW, SoundCategory.BLOCKS, 1F	, world.rand.nextFloat() * 0.4F + 0.8F);
 						return true;
 					}
@@ -188,31 +190,8 @@ public class BlockBetterCauldron extends BlockCauldron implements IModel
 		TileEntityCauldron te = (TileEntityCauldron) world.getTileEntity(pos);
 		PotionType type = te.getPotionType();
 
-		if(toMix.getItem() == Items.GUNPOWDER && te.getUseType() == PotionUseType.NORMAL)
-		{
-			toMix.shrink(1);
-			te.setUseType(PotionUseType.SPLASH);
-			world.playSound(null, pos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1F, rand.nextFloat());
-
-			for(int i = 0 ; i < 5; i++)
-				PotionExpansion.proxy.spawnCauldronSpellParticle(pos, te);
-
+		if(te.getUseType() == PotionUseType.NORMAL && mixUseType(toMix, te, world, pos))
 			return true;
-		}
-
-		if(toMix.getItem() == Items.DRAGON_BREATH && te.getUseType() == PotionUseType.NORMAL)
-		{
-			toMix.shrink(1);
-			te.setUseType(PotionUseType.LINGERING);
-			world.playSound(null, pos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1F, rand.nextFloat());
-
-			for(int i = 0 ; i < 5; i++)
-				PotionExpansion.proxy.spawnCauldronSpellParticle(pos, te);
-
-			return true;
-		}
-
-
 
 		if(PotionHandler.canMixPotion(type, toMix))
 		{
@@ -234,6 +213,27 @@ public class BlockBetterCauldron extends BlockCauldron implements IModel
 		}
 	}
 
+	private boolean mixUseType(ItemStack stack, TileEntityCauldron te, World world, BlockPos pos)
+	{
+		for(PotionUseType useType : PotionUseType.values())
+		{
+			if(useType.getReagent() == null)
+				continue;
+
+			if(stack.getItem() == useType.getReagent())
+			{
+				te.setUseType(useType);
+				world.playSound(null, pos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1F, world.rand.nextFloat());
+
+				for(int i = 0 ; i < 5; i++)
+					PotionExpansion.proxy.spawnCauldronSpellParticle(pos, te);
+
+				return true;
+			}
+		}
+
+		return false;
+	}
 
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
 	{
