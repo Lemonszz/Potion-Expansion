@@ -45,6 +45,9 @@ public class ClientProxy implements IProxy
 
 	public void spawnSplashParticle(World worldIn, double posX, double posY, double posZ, TileEntityCauldron te)
 	{
+		if(te.getTank().getFluid() == null)
+			return;
+
 		for(int i = 0; i < 5; i++)
 		{
 			Particle p = new ParticleGoodSplash(worldIn, posX, posY, posZ, 0, 0, 0);

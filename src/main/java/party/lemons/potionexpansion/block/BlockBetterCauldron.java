@@ -107,6 +107,16 @@ public class BlockBetterCauldron extends BlockCauldron implements IModel
 
 		}
 
+		if(player.getHeldItem(hand).getItem() == Items.ARROW)
+		{
+			ItemStack returnStack = mixArrow(player.getHeldItem(hand), world, (TileEntityCauldron) world.getTileEntity(pos));
+			if(!returnStack.isEmpty())
+			{
+				player.addItemStackToInventory(returnStack);
+				return true;
+			}
+		}
+
 		if(mixPotion(player.getHeldItem(hand), world, pos, state, world.rand))
 			return true;
 
@@ -130,13 +140,40 @@ public class BlockBetterCauldron extends BlockCauldron implements IModel
 
 			Random rand = worldIn.rand;
 
-			mixPotion(stack, worldIn, pos, state, rand);
+			if(stack.getItem() == Items.ARROW)
+			{
+				ItemStack returnStack = mixArrow(stack, worldIn, te);
+				if(!returnStack.isEmpty() && !worldIn.isRemote)
+				{
+					EntityItem eI = new EntityItem(worldIn, itemEntity.posX, itemEntity.posY, itemEntity.posZ, returnStack);
+					worldIn.spawnEntity(eI);
+				}
+			}
+			else
+				mixPotion(stack, worldIn, pos, state, rand);
 
 			PotionExpansion.proxy.spawnSplashParticle(worldIn, itemEntity.posX, itemEntity.posY, itemEntity.posZ, te);
 			itemEntity.motionY = -1.5F;
 			itemEntity.motionX = (-1 + (rand.nextFloat() * 2)) / 2;
 			itemEntity.motionZ = (-1 + (rand.nextFloat() * 2)) / 2;
 		}
+	}
+
+	public ItemStack mixArrow(ItemStack arrowStack, World world, TileEntityCauldron te)
+	{
+		if(te.getTank().getFluid() != null && te.getTank().getFluidAmount() >= 200 && te.getTank().getFluid().getFluid() == ModFluids.POTION)
+		{
+			PotionType type = te.getPotionType();
+			arrowStack.shrink(1);
+
+			ItemStack stack = new ItemStack(Items.TIPPED_ARROW);
+			PotionUtils.addPotionToItemStack(stack, type);
+			te.getTank().drain(200, true);
+
+			return stack;
+		}
+
+		return ItemStack.EMPTY;
 	}
 
 	public boolean mixPotion(ItemStack toMix, World world, BlockPos pos, IBlockState state, Random rand)
