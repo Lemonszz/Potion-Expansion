@@ -1,19 +1,13 @@
 package party.lemons.potionexpansion.block;
 
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.Particle;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.BlockFire;
-import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.ParticleSpell;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -22,14 +16,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.*;
-import net.minecraft.potion.PotionHelper;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -44,7 +36,6 @@ import party.lemons.potionexpansion.misc.MiscUtil;
 import party.lemons.potionexpansion.particle.ParticleGoodBubble;
 
 import javax.annotation.Nullable;
-import java.awt.*;
 import java.util.Random;
 
 /**
@@ -58,7 +49,7 @@ public class BlockBetterCauldron extends BlockCauldron implements IModel
 	{
 		super();
 
-		this.setDefaultState(this.blockState.getBaseState().withProperty(LEVEL, Integer.valueOf(0)).withProperty(BOIL, false));
+		this.setDefaultState(this.blockState.getBaseState().withProperty(LEVEL, 0).withProperty(BOIL, false));
 	}
 
 	@Override
@@ -67,7 +58,7 @@ public class BlockBetterCauldron extends BlockCauldron implements IModel
 		if(player.isSneaking())
 			return false;
 
-		if(FluidUtil.interactWithFluidHandler(player, hand, world, pos, side) && side == EnumFacing.UP)
+		if(FluidUtil.interactWithFluidHandler(player, hand, world, pos, side))
 			return true;
 
 		ItemStack held = player.getHeldItem(hand);

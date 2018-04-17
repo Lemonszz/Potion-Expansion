@@ -8,6 +8,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import party.lemons.potionexpansion.config.ModConstants;
 import party.lemons.potionexpansion.fluid.ModFluids;
+import party.lemons.potionexpansion.misc.tweaks.ModTweaks;
 import party.lemons.potionexpansion.proxy.IProxy;
 
 /**
@@ -26,6 +27,7 @@ public class PotionExpansion
 	{
 		proxy.initTESR();
 		ModFluids.init();
+		ModTweaks.init();
 	}
 
 	static
